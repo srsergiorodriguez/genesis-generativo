@@ -54,7 +54,7 @@ async function setup() {
         pobs[i].update(...order(i));
       }
       textToSpeech(texto, synth, voice);
-      outputVolume(0.05, 0.5);
+      outputVolume(0.3, 0.5);
     }, 4000);
   });
 
@@ -222,7 +222,7 @@ function textToSpeech(text, synth, voice) {
   frase.pitch = 0.1;
   frase.rate = 0.6;
   frase.voice = voice;
-  frase.volume = 0.3;
+  frase.volume = 0.5;
   synth.speak(frase);
 
   frase.addEventListener('boundary', function(event) {
