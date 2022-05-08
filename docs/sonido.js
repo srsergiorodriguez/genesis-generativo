@@ -64,9 +64,9 @@ function soundDinamics() {
   } 
 
   if (step.v === 4 || step.v === 9) {
-    outputVolume(0.6, 0.5);
+    outputVolume(0.7, 0.5);
   } else {
-    outputVolume(0.1);
+    outputVolume(0.3, 0.5);
   }
 }
 
