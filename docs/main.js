@@ -76,8 +76,7 @@ async function setup() {
     a.fijarGramatica(gramatica).probarGramatica();
     synth.pause();
     synth.cancel();
-    
-    
+    textHTML.html('');
   }
 }
 
@@ -108,7 +107,7 @@ function drawShapes() {
   if (step.v < 2) {
     background(255);
   } else if (step.v === 2) {
-    const c = map(t, trans, trans * 1.2, 255, 0);
+    const c = map(t, trans, trans + 20, 255, 0);
     background(c);
   } else {
     background(0);
