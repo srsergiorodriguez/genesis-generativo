@@ -1,4 +1,6 @@
 const a = new Aventura('es');
+const w = 960, h = 540;
+
 let textHTML;
 const pobsNum = 20;
 let stp = {v:0};
@@ -27,12 +29,16 @@ async function setup() {
   setSound();
   const {synth, voice} = await prepareSpeech();
 
-  const cnv = createCanvas(960, 540).parent('#canvas-container');
+  const cnv = createCanvas(w, h).parent('#canvas-container');
+  background(255);
 
   textHTML = createElement('h1','').class('subtitle').parent('#text-container');
 
-  createButton('GENERAR').parent('#gui-container').mouseClicked(async () => {
+  const generateBtn = createButton('Generar un mundo...').id('generate-btn').parent('#gui-container').mouseClicked(async () => {
     reset();
+    generateBtn.hide();
+    stopBtn.show();
+    select('#epilogue').hide();
     setSound();
     outputVolume(0);
     oscs.map(o => {o.start()});
@@ -58,11 +64,19 @@ async function setup() {
     }, 4000);
   });
 
-  createButton('PARAR').parent('#gui-container').mouseClicked(() => {
+  const stopBtn = createButton('Parar').id('stop-btn').parent('#gui-container').mouseClicked(() => {
     reset();
   });
 
+  stopBtn.hide();
+
   function reset() {
+    generateBtn.show();
+    stopBtn.hide();
+    select('#epilogue').show();
+    select('body').style('background', '#ffffff');
+    selectAll('.subtitle').map(e => e.style('color', 'black'));
+    
     oscs.map(o => {o.stop()});
     lfo.stop();
     noiseLfo.stop();
@@ -71,7 +85,6 @@ async function setup() {
     background(255);
     step.v = 0;
     started = false;
-    selectAll('.image-glitch').map(d => d.remove());
     gramatica = JSON.parse(JSON.stringify(copiaGramatica)); 
     a.fijarGramatica(gramatica).probarGramatica();
     synth.pause();
@@ -87,7 +100,7 @@ function draw() {
     t++;
   }
 
-  if (step.v >= 10) {
+  if (step.v === 10) {
     oscs.map(o => {o.stop()});
     lfo.stop();
     noiseLfo.stop();
@@ -97,6 +110,10 @@ function draw() {
     step.v = 0;
     started = false;
     textHTML.html('');
+    select('#generate-btn').show();
+    select('#stop-btn').hide();
+    select('#epilogue').show();
+    select('body').style('background', '#ffffff');
   }
 }
 
@@ -106,9 +123,13 @@ function drawShapes() {
   }
   if (step.v < 2) {
     background(255);
+    select('body').style('background', '#ffffff');
+    selectAll('.subtitle').map(e => e.style('color', 'black'));
   } else if (step.v === 2) {
     const c = map(t, trans, trans + 20, 255, 0);
     background(c);
+    select('body').style('background', `rgb(${c},${c},${c})`);
+    selectAll('.subtitle').map(e => e.style('color', `rgb(${255 - c},${255 - c},${255 - c})`));
   } else {
     background(0);
   }
@@ -212,7 +233,14 @@ function getOrder(index) {
 async function prepareSpeech() {
   await  new Promise(res => {speechSynthesis.onvoiceschanged = () => res()});
   const synth = window.speechSynthesis;
-  const voice = synth.getVoices()[9];
+  const voices = synth.getVoices();
+  const defaultVoice = voices.filter(d => d.name.includes("Diego"))[0];
+  let voice;
+  if (defaultVoice === undefined) {
+    voice = shuffle(voices.filter(d => d.lang.includes("es")), false)[0]
+  } else {
+    voice = defaultVoice;
+  }
   if (performance.navigation.type == 1) {synth.pause(),synth.cancel();}
   return {synth, voice}
 }
@@ -234,10 +262,6 @@ function textToSpeech(text, synth, voice) {
       word = word.replace('-','');
     }
     textHTML.html(word);
-  });
-
-  frase.addEventListener('mark', function(event) {
-    console.log('A mark was reached: ' + event.name);
   });
 }
 
