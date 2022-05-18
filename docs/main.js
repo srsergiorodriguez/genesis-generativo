@@ -69,6 +69,7 @@ async function setup() {
   });
 
   stopBtn.hide();
+  generateBtn.show();
 
   function reset() {
     generateBtn.show();
@@ -76,7 +77,7 @@ async function setup() {
     select('#epilogue').show();
     select('body').style('background', '#ffffff');
     selectAll('.subtitle').map(e => e.style('color', 'black'));
-    
+
     oscs.map(o => {o.stop()});
     lfo.stop();
     noiseLfo.stop();
