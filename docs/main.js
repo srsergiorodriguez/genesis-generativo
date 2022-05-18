@@ -20,9 +20,6 @@ const pobs = []; // pobladores
 let t = 0;
 let trans = 0;
 
-// me gusta como se ven los punticos moviendose
-// que los cantos sean hexadecimales
-
 async function setup() {
   frameRate(10);
   angleMode(DEGREES);
@@ -34,7 +31,8 @@ async function setup() {
 
   textHTML = createElement('h1','').class('subtitle').parent('#text-container');
 
-  const generateBtn = createButton('Generar un mundo...').id('generate-btn').parent('#gui-container').mouseClicked(async () => {
+  const generateBtn = createButton('Generar un mundo...').id('generate-btn').parent('#gui-container');
+  generateBtn.mouseClicked(() => {
     reset();
     generateBtn.hide();
     stopBtn.show();
