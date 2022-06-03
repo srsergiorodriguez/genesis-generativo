@@ -100,19 +100,21 @@ function draw() {
   }
 
   if (step.v === 10) {
-    oscs.map(o => {o.stop()});
-    lfo.stop();
-    noiseLfo.stop();
-    noiseOsc.stop();
-
-    background(255);
-    step.v = 0;
-    started = false;
-    textHTML.html('');
-    select('#generate-btn').show();
-    select('#stop-btn').hide();
-    select('#epilogue').show();
-    select('body').style('background', '#ffffff');
+    setTimeout(()=>{
+      oscs.map(o => {o.stop()});
+      lfo.stop();
+      noiseLfo.stop();
+      noiseOsc.stop();
+  
+      background(255);
+      step.v = 0;
+      started = false;
+      textHTML.html('');
+      select('#generate-btn').show();
+      select('#stop-btn').hide();
+      select('#epilogue').show();
+      select('body').style('background', '#ffffff');      
+    },10000);
   }
 }
 
@@ -148,14 +150,14 @@ function drawShapes() {
   }
   
   if (step.v === 4 || step.v === 9) {
-    if (random() > 0.6) {
+    if (random() > 0.65) {
       granular(Math.floor(noise(t) * 100)); // para los cantos
     }
   } else if (step.v === 8) {
-    if (random() > 0.6) {
+    if (random() > 0.65) {
       granular(10);
     }
-  } else if (random() > 0.99) {
+  } else if (random() > 0.994) {
     granular(100);
   } else {
     displace();
@@ -230,11 +232,12 @@ function getOrder(index) {
 }
 
 async function prepareSpeech() {
-  await  new Promise(res => {speechSynthesis.onvoiceschanged = () => res()});
+  await new Promise(res => {speechSynthesis.onvoiceschanged = () => res()});
   const synth = window.speechSynthesis;
   const voices = synth.getVoices();
   const defaultVoice = voices.filter(d => d.name.includes("Diego"))[0];
   let voice;
+  console.log(voices);
   if (defaultVoice === undefined) {
     voice = shuffle(voices.filter(d => d.lang.includes("es")), false)[0]
   } else {
