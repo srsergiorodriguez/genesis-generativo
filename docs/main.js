@@ -12,7 +12,7 @@ let t = 0;
 let trans = 0;
 
 async function setup() {
-  frameRate(8);
+  frameRate(6);
   angleMode(DEGREES);
   setSound();
   const {synth, voice} = await prepareSpeech();
@@ -242,7 +242,7 @@ function textToSpeech(text, synth, voice) {
   frase.pitch = 0.1;
   frase.rate = 0.6;
   frase.voice = voice;
-  frase.volume = 0.5;
+  frase.volume = 0.6;
   synth.speak(frase);
 
   frase.addEventListener('boundary', function(event) {
