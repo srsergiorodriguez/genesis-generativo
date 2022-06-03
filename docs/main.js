@@ -3,17 +3,8 @@ const w = 960, h = 540;
 
 let textHTML;
 const pobsNum = 20;
-let stp = {v:0};
-const stepHandler = {
-  set: function (obj, prop, value) {
-    if (prop === 'v') {
-      console.log(value);
-    }
-    obj[prop] = value;
-  }
-};
 
-let step = new Proxy(stp, stepHandler);
+let step = {v:0};
 let started = false;
 let f; // forma principal
 const pobs = []; // pobladores
@@ -21,7 +12,7 @@ let t = 0;
 let trans = 0;
 
 async function setup() {
-  frameRate(10);
+  frameRate(8);
   angleMode(DEGREES);
   setSound();
   const {synth, voice} = await prepareSpeech();
@@ -48,7 +39,7 @@ async function setup() {
     setTimeout(() => {
       started = true;
       const texto = a.expandirGramatica('init');
-      console.log(texto);
+      // console.log(texto);
       f = new Forma(hexes.general[gramatica.forma.c], gramatica.forma.f);
 
       const orderIndex = gramatica.secuencia.indexOf(gramatica.elemento.s[0]);
@@ -166,12 +157,11 @@ function drawShapes() {
 
 function grain() {
   loadPixels();
-  for (let i = 0; i < pixels.length; i += 4) {
-    if (random() > 0.99) {
-      pixels[i + 0] = random(255);
-      pixels[i + 1] = random(255);
-      pixels[i + 2] = random(255);
-    }
+  for (let i = 0; i < 5000; i++) {
+    const r = floor(random(pixels.length));
+    pixels[r + 0] = random(255);
+    pixels[r + 1] = random(255);
+    pixels[r + 2] = random(255);
   }
   updatePixels();
 }
@@ -237,13 +227,13 @@ async function prepareSpeech() {
   const voices = synth.getVoices();
   const defaultVoice = voices.filter(d => d.name.includes("Diego"))[0];
   let voice;
-  console.log(voices);
   if (defaultVoice === undefined) {
     voice = shuffle(voices.filter(d => d.lang.includes("es")), false)[0]
   } else {
     voice = defaultVoice;
   }
-  if (performance.navigation.type == 1) {synth.pause(),synth.cancel();}
+  console.log(voice);
+  if (performance.navigation.type == 1) {synth.pause(), synth.cancel();}
   return {synth, voice}
 }
 
@@ -256,7 +246,6 @@ function textToSpeech(text, synth, voice) {
   synth.speak(frase);
 
   frase.addEventListener('boundary', function(event) {
-    // console.log(event.elapsedTime);
     const index = event.charIndex;
     let word = text.slice(index).split(' ')[0].split('\n')[0];
     if (word.includes('-')) {
@@ -265,15 +254,6 @@ function textToSpeech(text, synth, voice) {
     }
     textHTML.html(word);
   });
-}
-
-async function base64_arraybuffer(data) {
-  const base64url = await new Promise((r) => {
-    const reader = new FileReader()
-    reader.onload = () => r(reader.result)
-    reader.readAsDataURL(new Blob([data]))
-  })
-  return base64url.split(",", 2)[1]
 }
 
 function randnum(n) {
