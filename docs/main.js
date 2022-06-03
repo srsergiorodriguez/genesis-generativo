@@ -246,7 +246,6 @@ function textToSpeech(text, synth, voice) {
   synth.speak(frase);
 
   frase.addEventListener('boundary', function(event) {
-    console.log(event);
     const index = event.charIndex;
     let word = text.slice(index).split(' ')[0].split('\n')[0];
     if (word.includes('-')) {
